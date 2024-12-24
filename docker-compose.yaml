@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  influxdb:
+    image: influxdb:latest
+    ports:
+      - '8086:8086'
+    volumes:
+      - influxdb-storage:/var/lib/influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=mypassword
+      - DOCKER_INFLUXDB_INIT_ORG=my-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+
+  telegraf:
+    image: telegraf:latest
+    depends_on:
+      - influxdb
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    environment:
+      - HOSTNAME=telegraf-container
+    command: --config /etc/telegraf/telegraf.conf
+
+  ubuntu:
+    image: ubuntu:latest
+    stdin_open: true
+    tty: true
+
+volumes:
+  influxdb-storage:
