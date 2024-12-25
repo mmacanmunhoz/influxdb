@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'  # Use uma versão mais recente do Docker Compose
 
 services:
   influxdb:
@@ -20,8 +20,10 @@ services:
       - influxdb
     volumes:
       - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock 
     environment:
       - HOSTNAME=telegraf-container
+    user: "0:125"
     command: --config /etc/telegraf/telegraf.conf
 
   ubuntu:
